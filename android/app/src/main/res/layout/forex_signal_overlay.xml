@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#CC000000"
+    android:padding="16dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="140dp"
+    android:elevation="10dp">
+
+    <!-- AI Lens Header -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <TextView
+            android:text="🤖"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"/>
+
+        <TextView
+            android:text="AI LENS"
+            android:textColor="#00FF00"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <!-- Signal Display -->
+    <TextView
+        android:id="@+id/signalText"
+        android:text="ANALYZING..."
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Confidence Bar -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="120dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:background="#333333">
+
+        <View
+            android:id="@+id/confidenceBar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"
+            android:background="#00FF00"/>
+
+    </LinearLayout>
+
+    <!-- Analysis Details -->
+    <TextView
+        android:id="@+id/confidenceText"
+        android:text="Analyzing Chart..."
+        android:textColor="#CCCCCC"
+        android:textSize="10sp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Real-time Status -->
+    <TextView
+        android:id="@+id/statusText"
+        android:text="● LIVE"
+        android:textColor="#00FF00"
+        android:textSize="8sp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="4dp"/>
+
+</LinearLayout> 

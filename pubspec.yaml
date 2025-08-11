@@ -1,0 +1,97 @@
+name: appaiindikatorforex
+
+description: "AI Forex Master Indicator - Advanced Chart Analysis with Machine Learning"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Core Flutter
+  cupertino_icons: ^1.0.2
+  
+  # AI & Machine Learning
+  # tflite_flutter: ^0.9.5  # Temporarily disabled due to compatibility issues
+  image: ^4.1.3
+  
+  # API Integrations
+  http: ^1.1.0
+  dio: ^5.4.0
+  web_socket_channel: ^2.4.0
+  
+  # UI & Design
+  google_fonts: ^6.1.0
+  flutter_animate: ^4.3.0
+  lottie: ^2.7.0
+  shimmer: ^3.0.0
+  
+  # Charts & Visualization
+  fl_chart: ^0.66.0
+  syncfusion_flutter_charts: ^24.1.41
+  
+  # State Management
+  provider: ^6.1.1
+  
+  # Utilities
+  shared_preferences: ^2.2.2
+  permission_handler: ^11.1.0
+  path_provider: ^2.1.1
+  device_info_plus: ^9.1.1
+  
+  # Notifications
+  # flutter_local_notifications: ^16.3.0  # Temporarily disabled due to compilation issues
+  
+  # Background Services
+  # workmanager: ^0.5.2  # Temporarily disabled due to compilation issues
+  
+  # Database
+  # sqflite: ^2.3.0  # Temporarily disabled
+  
+  # JSON & Data
+  # json_annotation: ^4.8.1  # Temporarily disabled
+  
+  # Date & Time
+  intl: ^0.19.0
+  
+  # Crypto & Security
+  # crypto: ^3.0.3  # Temporarily disabled
+  
+  # Network
+  # connectivity_plus: ^5.0.2  # Temporarily disabled
+  
+  # Storage
+  # hive: ^2.2.3  # Temporarily disabled
+  # hive_flutter: ^1.1.0  # Temporarily disabled
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  # build_runner: ^2.4.7  # Temporarily disabled
+  # json_serializable: ^6.7.1  # Temporarily disabled
+  # hive_generator: ^2.0.1  # Temporarily disabled
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/model/
+    - assets/images/
+    - assets/animations/
+    - assets/data/
+  
+  # fonts:
+  #   - family: Poppins
+  #     fonts:
+  #       - asset: assets/fonts/Poppins-Regular.ttf
+  #       - asset: assets/fonts/Poppins-Bold.ttf
+  #         weight: 700
+  #       - asset: assets/fonts/Poppins-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Poppins-Medium.ttf
+  #         weight: 500 

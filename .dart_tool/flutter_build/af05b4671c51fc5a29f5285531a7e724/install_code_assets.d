@@ -1,0 +1,1 @@
+ C:\\Users\\owner\\AndroidStudioProjects\\AppAiIndikatorForex\\.dart_tool\\flutter_build\\af05b4671c51fc5a29f5285531a7e724\\native_assets.json: 

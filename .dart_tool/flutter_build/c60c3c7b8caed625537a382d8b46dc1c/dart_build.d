@@ -1,0 +1,1 @@
+ C:\\Users\\owner\\AndroidStudioProjects\\AppAiIndikatorForex\\.dart_tool\\flutter_build\\c60c3c7b8caed625537a382d8b46dc1c\\dart_build_result.json: 

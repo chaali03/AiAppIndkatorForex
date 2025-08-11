@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🤖 AI Forex Master Indicator
 
 **Advanced Chart Analysis with Machine Learning & Real-time Market Data**
@@ -185,3 +186,6 @@ This AI tool is for educational and informational purposes only. It should not b
 ---
 
 **Made with ❤️ by AI Forex Master Team**
+=======
+# AiAppIndkatorForex
+>>>>>>> 077ae2e49befa6ed3277e5a91c74f4d6eb3f2bd6

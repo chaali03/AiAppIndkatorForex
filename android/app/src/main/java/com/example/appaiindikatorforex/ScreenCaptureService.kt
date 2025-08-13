@@ -977,8 +977,13 @@ class ScreenCaptureService : Service() {
         if (body > 0) {
             val bullish = close < open
             val bearish = close > open
-            val upperShadow = if (bullish) open - high else close - high
-            val lowerShadow = if (bullish) low - close else low - open
+            // In screen coordinates, smaller y = higher price
+            // Upper shadow: from wick top (high) to body top (close if bullish, open if bearish)
+            // Lower shadow: from body bottom (open if bullish, close if bearish) to wick bottom (low)
+            val computedUpperShadow = if (bullish) (close - high) else (open - high)
+            val computedLowerShadow = if (bullish) (low - open) else (low - close)
+            val upperShadow = kotlin.math.max(0, computedUpperShadow)
+            val lowerShadow = kotlin.math.max(0, computedLowerShadow)
             
             return Candle(open, close, high, low, body, upperShadow, lowerShadow, bullish, bearish)
         }

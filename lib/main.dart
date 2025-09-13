@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
+import 'screens/capture_flow.dart';
 
 void main() {
   runApp(const ForexAIApp());
@@ -404,6 +405,21 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
                   ],
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const CaptureFlowScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.play_circle_fill),
+              label: const Text('Start Screen Capture'),
             ),
           ),
         ],

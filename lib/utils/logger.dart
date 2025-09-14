@@ -5,37 +5,37 @@ class Logger {
   static const String _tag = 'AI_FOREX_MASTER';
   
   // Log levels
-  static const int VERBOSE = 0;
-  static const int DEBUG = 1;
-  static const int INFO = 2;
-  static const int WARNING = 3;
-  static const int ERROR = 4;
-  static const int FATAL = 5;
+  static const int verbose = 0;
+  static const int debugLevel = 1;
+  static const int infoLevel = 2;
+  static const int warningLevel = 3;
+  static const int errorLevel = 4;
+  static const int fatalLevel = 5;
   
-  static int _currentLevel = DEBUG;
+  static int _currentLevel = debugLevel;
   
   static void setLogLevel(int level) {
     _currentLevel = level;
   }
   
   static void verbose(String message, [String? tag]) {
-    _log(VERBOSE, message, tag);
+    _log(verbose, message, tag);
   }
   
   static void debug(String message, [String? tag]) {
-    _log(DEBUG, message, tag);
+    _log(debugLevel, message, tag);
   }
   
   static void info(String message, [String? tag]) {
-    _log(INFO, message, tag);
+    _log(infoLevel, message, tag);
   }
   
   static void warning(String message, [String? tag]) {
-    _log(WARNING, message, tag);
+    _log(warningLevel, message, tag);
   }
   
   static void error(String message, [String? tag, dynamic error, StackTrace? stackTrace]) {
-    _log(ERROR, message, tag);
+    _log(errorLevel, message, tag);
     if (error != null) {
       developer.log('Error details: $error', name: tag ?? _tag);
     }
@@ -45,7 +45,7 @@ class Logger {
   }
   
   static void fatal(String message, [String? tag, dynamic error, StackTrace? stackTrace]) {
-    _log(FATAL, message, tag);
+    _log(fatalLevel, message, tag);
     if (error != null) {
       developer.log('Fatal error details: $error', name: tag ?? _tag);
     }
@@ -66,7 +66,7 @@ class Logger {
         developer.log(logMessage, name: logTag);
       } else {
         // In release mode, only log errors and fatal messages
-        if (level >= ERROR) {
+        if (level >= errorLevel) {
           developer.log(logMessage, name: logTag);
         }
       }
@@ -75,17 +75,17 @@ class Logger {
   
   static String _getLevelName(int level) {
     switch (level) {
-      case VERBOSE:
+      case verbose:
         return 'VERBOSE';
-      case DEBUG:
+      case debugLevel:
         return 'DEBUG';
-      case INFO:
+      case infoLevel:
         return 'INFO';
-      case WARNING:
+      case warningLevel:
         return 'WARNING';
-      case ERROR:
+      case errorLevel:
         return 'ERROR';
-      case FATAL:
+      case fatalLevel:
         return 'FATAL';
       default:
         return 'UNKNOWN';

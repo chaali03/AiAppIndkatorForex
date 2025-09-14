@@ -275,8 +275,8 @@ class ForexAnalyzer {
   
   static String _makeEnhancedAIDecision(double buyScore, double sellScore, double confidence) {
     // TradingView-style decision making with bullish bias
-    final buyThreshold = 0.45; // Lowered threshold for buy signals (TradingView style)
-    final sellThreshold = 0.55; // Raised threshold for sell signals
+    const buyThreshold = 0.45; // Lowered threshold for buy signals (TradingView style)
+    const sellThreshold = 0.55; // Raised threshold for sell signals
     
     // Normalize scores
     final totalScore = buyScore + sellScore;
@@ -630,8 +630,8 @@ class ForexAnalyzer {
   
   static String _makeAIDecision(double buyScore, double sellScore, double confidence) {
     // === AI DECISION THRESHOLD - SAFER & LESS RANDOM ===
-    final minConfidence = 0.45; // butuh konfirmasi minimal
-    final minGap = 0.08; // gap minimal antar skor
+    const minConfidence = 0.45; // butuh konfirmasi minimal
+    const minGap = 0.08; // gap minimal antar skor
 
     print('🤖 AI LENS DECISION: Buy Score: ${buyScore.toStringAsFixed(2)}, Sell Score: ${sellScore.toStringAsFixed(2)}, Confidence: ${(confidence * 100).toStringAsFixed(1)}%');
 
@@ -805,14 +805,16 @@ class ForexAnalyzer {
     // RSI-based momentum
     if (bullishBias > 0.5) {
       // Bullish momentum
-      if (rsi > 70) momentumState = 1.0; // Strong bullish momentum
-      else if (rsi > 55) momentumState = 0.75; // Moderate bullish momentum
+      if (rsi > 70) {
+        momentumState = 1.0; // Strong bullish momentum
+      } else if (rsi > 55) momentumState = 0.75; // Moderate bullish momentum
       else if (rsi > 45) momentumState = 0.5; // Neutral momentum
       else momentumState = 0.25; // Weak bullish momentum
     } else {
       // Bearish momentum
-      if (rsi < 30) momentumState = 0.0; // Strong bearish momentum
-      else if (rsi < 45) momentumState = 0.25; // Moderate bearish momentum
+      if (rsi < 30) {
+        momentumState = 0.0; // Strong bearish momentum
+      } else if (rsi < 45) momentumState = 0.25; // Moderate bearish momentum
       else if (rsi < 55) momentumState = 0.5; // Neutral momentum
       else momentumState = 0.75; // Weak bearish momentum
     }
@@ -1154,7 +1156,7 @@ class ForexAnalyzer {
       if (reasons.isEmpty) {
         return _getSignalReason(signal, indicators); // Fallback to standard reason
       } else if (signal == 'STRONG_BUY') {
-        return '⭐ PREMIUM ANALYSIS: ' + reasons.join(', ');
+        return '⭐ PREMIUM ANALYSIS: ${reasons.join(', ')}';
       } else {
         return reasons.join(', ');
       }
@@ -1193,7 +1195,7 @@ class ForexAnalyzer {
       if (reasons.isEmpty) {
         return _getSignalReason(signal, indicators); // Fallback to standard reason
       } else if (signal == 'STRONG_SELL') {
-        return '⭐ PREMIUM ANALYSIS: ' + reasons.join(', ');
+        return '⭐ PREMIUM ANALYSIS: ${reasons.join(', ')}';
       } else {
         return reasons.join(', ');
       }
@@ -1561,14 +1563,16 @@ class ForexAnalyzer {
     final adx = indicators['ADX'] ?? 25;
     
     if (signal == 'BUY') {
-      if (rsi < 30) return 'RSI oversold + strong reversal';
-      else if (macd > 0.2) return 'MACD bullish momentum';
+      if (rsi < 30) {
+        return 'RSI oversold + strong reversal';
+      } else if (macd > 0.2) return 'MACD bullish momentum';
       else if (stoch < 20) return 'Stochastic oversold';
       else if (adx > 30) return 'Strong uptrend';
       else return 'Multiple bullish confirmations';
     } else if (signal == 'SELL') {
-      if (rsi > 70) return 'RSI overbought + strong reversal';
-      else if (macd < -0.2) return 'MACD bearish momentum';
+      if (rsi > 70) {
+        return 'RSI overbought + strong reversal';
+      } else if (macd < -0.2) return 'MACD bearish momentum';
       else if (stoch > 80) return 'Stochastic overbought';
       else if (adx > 30) return 'Strong downtrend';
       else return 'Multiple bearish confirmations';
@@ -1747,16 +1751,19 @@ class ForexAnalyzer {
     double confidence = 0.5; // Base confidence
     
     // RSI confidence
-    if (rsi < 20 || rsi > 80) confidence += 0.2;
-    else if (rsi < 30 || rsi > 70) confidence += 0.1;
+    if (rsi < 20 || rsi > 80) {
+      confidence += 0.2;
+    } else if (rsi < 30 || rsi > 70) confidence += 0.1;
     
     // MACD confidence
-    if (macd.abs() > 0.3) confidence += 0.15;
-    else if (macd.abs() > 0.1) confidence += 0.1;
+    if (macd.abs() > 0.3) {
+      confidence += 0.15;
+    } else if (macd.abs() > 0.1) confidence += 0.1;
     
     // Stochastic confidence
-    if (stoch < 10 || stoch > 90) confidence += 0.15;
-    else if (stoch < 20 || stoch > 80) confidence += 0.1;
+    if (stoch < 10 || stoch > 90) {
+      confidence += 0.15;
+    } else if (stoch < 20 || stoch > 80) confidence += 0.1;
     
     // Pattern confidence
     confidence += patternCount * 0.05;
@@ -1768,14 +1775,23 @@ class ForexAnalyzer {
     int bullishSignals = 0;
     int bearishSignals = 0;
     
-    if (rsi > 50) bullishSignals++;
-    else bearishSignals++;
+    if (rsi > 50) {
+      bullishSignals++;
+    } else {
+      bearishSignals++;
+    }
     
-    if (macd > 0) bullishSignals++;
-    else bearishSignals++;
+    if (macd > 0) {
+      bullishSignals++;
+    } else {
+      bearishSignals++;
+    }
     
-    if (change > 0) bullishSignals++;
-    else bearishSignals++;
+    if (change > 0) {
+      bullishSignals++;
+    } else {
+      bearishSignals++;
+    }
     
     if (bullishSignals > bearishSignals) return 'BULLISH';
     if (bearishSignals > bullishSignals) return 'BEARISH';
@@ -1854,8 +1870,9 @@ class ForexAnalyzer {
       switch (pairType) {
         case 0: // Major pairs - standard charts
           chartType = 'STANDARD_CANDLESTICK';
-          if (width > 400) chartType = 'LARGE_CANDLESTICK';
-          else if (width < 200) chartType = 'SMALL_CANDLESTICK';
+          if (width > 400) {
+            chartType = 'LARGE_CANDLESTICK';
+          } else if (width < 200) chartType = 'SMALL_CANDLESTICK';
           break;
         case 1: // Minor pairs - detailed charts
           chartType = 'DETAILED_CANDLESTICK';
@@ -2769,21 +2786,27 @@ class ForexAnalyzer {
       else if (pairType == 2) marketConditionScore += 0.8; // Exotic pairs - increased from 0.5 to 0.8
       
       // USD and JPY pair special adjustments (premium feature)
-      final bool isUSDPair = random.nextBool(); // Simulate USD pair detection
-      final bool isJPYPair = !isUSDPair && random.nextBool(); // Simulate JPY pair detection
+      final randomGen = Random();
+      final usdPairDetected = randomGen.nextBool(); // Simulate USD pair detection
       
-      if (isUSDPair) {
-        if (sessionType == "New York") marketConditionScore += 1.5; // USD pairs perform better in NY session
-        print('⭐ AI LENS PREMIUM: USD pair detected - applying premium NY session adjustment');
+      if (usdPairDetected) {
+        if (sessionType == "New York") {
+          marketConditionScore += 1.5; // USD pairs perform better in NY session
+          print('⭐ AI LENS PREMIUM: USD pair detected - applying premium NY session adjustment');
+        }
       }
       
-      if (isJPYPair) {
-        if (sessionType == "Asian") marketConditionScore += 1.2; // JPY pairs perform better in Asian session
-        print('⭐ AI LENS PREMIUM: JPY pair detected - applying premium Asian session adjustment');
+      final jpyPairDetected = !usdPairDetected && randomGen.nextBool(); // Simulate JPY pair detection
+      
+      if (jpyPairDetected) {
+        if (sessionType == "Asian") {
+          marketConditionScore += 1.2; // JPY pairs perform better in Asian session
+          print('⭐ AI LENS PREMIUM: JPY pair detected - applying premium Asian session adjustment');
+        }
       }
       
       // Random factor (reduced impact)
-      marketConditionScore += (random.nextDouble() * 2.0) - 1.0; // -1.0 to +1.0
+      marketConditionScore += (randomGen.nextDouble() * 2.0) - 1.0; // -1.0 to +1.0
       
       if (marketConditionScore > 5.0) { // Strong bullish market condition
         if (!patterns.contains('BULLISH_MARKET_CONDITION')) {
@@ -2945,7 +2968,7 @@ class ForexAnalyzer {
     return patterns;
   }
 
-  static Future<Map<String, double>> _calculateLiveIndicators(Uint8List imageBytes) async {
+  Future<Map<String, double>> _calculateLiveIndicators(Uint8List imageBytes) async {
     // === TRADINGVIEW-ACCURATE AI LENS INDICATOR CALCULATION ===
     Map<String, double> indicators = {};
     
@@ -3181,8 +3204,8 @@ class ForexAnalyzer {
           (-0.15 - random.nextDouble() * 0.05)); // Bearish divergence
       
       // Calculate TradingView-accurate Stochastic values
-      final stochK = stochK;
-      final stochD = stochD;
+      final stochKFinal = stochK;
+      final stochDFinal = stochD;
       
       // === ENHANCED DYNAMIC WILLIAMS %R CALCULATION (TRADINGVIEW ACCURACY) ===
       // TradingView Williams %R tends to show clearer overbought/oversold conditions
@@ -3378,8 +3401,8 @@ class ForexAnalyzer {
         'MACD': macd,
         'MACD_SIGNAL': macdSignal,
         'MACD_HISTOGRAM': macd - macdSignal,
-        'STOCH_K': stochK.clamp(0.0, 100.0),
-        'STOCH_D': stochD.clamp(0.0, 100.0),
+        'STOCH_K': stochKFinal.clamp(0.0, 100.0),
+        'STOCH_D': stochDFinal.clamp(0.0, 100.0),
         'ADX': adx.clamp(0.0, 100.0),
         'PLUS_DI': plusDI.clamp(0.0, 100.0),
         'MINUS_DI': minusDI.clamp(0.0, 100.0),
@@ -3479,7 +3502,7 @@ class ForexAnalyzer {
                   pairType == 2 ? (500000 + random.nextDouble() * 1000000) : // Exotic pairs have lower volume
                   (1000000 + random.nextDouble() * 2000000)) * // Default for other pairs
                  sessionMultiplier * // Session-specific volume adjustment
-                 volumeStrength, // Bias-specific volume strength
+                 (bullishBias ? (0.8 + random.nextDouble() * 0.4) : (0.6 + random.nextDouble() * 0.4)), // Bias-specific volume strength
         
         'AVG_VOLUME': (pairType == 0 ? (1500000 + random.nextDouble() * 1500000) : // Major pairs have higher average volume
                       pairType == 2 ? (300000 + random.nextDouble() * 700000) : // Exotic pairs have lower average volume
@@ -3512,44 +3535,44 @@ class ForexAnalyzer {
         
         // TradingView-accurate market structure
         'MARKET_STRUCTURE': bullishBias ? 
-            (random.nextDouble() < 0.7 ? 'HIGHER_HIGHS_HIGHER_LOWS' : 'CONSOLIDATION') : // Bullish market structure
-            (random.nextDouble() < 0.7 ? 'LOWER_HIGHS_LOWER_LOWS' : 'CONSOLIDATION'), // Bearish market structure
+            (random.nextDouble() < 0.7 ? 1.0 : 0.5) : // Bullish market structure (1.0=HIGHER_HIGHS_HIGHER_LOWS, 0.5=CONSOLIDATION)
+            (random.nextDouble() < 0.7 ? -1.0 : 0.5), // Bearish market structure (-1.0=LOWER_HIGHS_LOWER_LOWS, 0.5=CONSOLIDATION)
             
         // TradingView-accurate trend strength
         'TREND_STRENGTH': adx / 100.0, // Normalized ADX as trend strength
         
         // TradingView-accurate market phases
         'MARKET_PHASE': bullishBias ? 
-            (adx > 30 ? 'TRENDING_UP' : 
-             adx > 20 ? 'EARLY_TREND_UP' : 
-             'ACCUMULATION') : // Bullish market phases
-            (adx > 30 ? 'TRENDING_DOWN' : 
-             adx > 20 ? 'EARLY_TREND_DOWN' : 
-             'DISTRIBUTION'), // Bearish market phases
+            (adx > 30 ? 1.0 : 
+             adx > 20 ? 0.75 : 
+             0.5) : // Bullish market phases
+            (adx > 30 ? -1.0 : 
+             adx > 20 ? -0.75 : 
+             -0.5), // Bearish market phases
              
         // TradingView-accurate volatility state
-        'VOLATILITY_STATE': bbWidth > 0.5 ? 'HIGH' : 
-                           bbWidth > 0.3 ? 'MEDIUM' : 
-                           'LOW',
+        'VOLATILITY_STATE': bbWidth > 0.5 ? 1.0 : 
+                           bbWidth > 0.3 ? 0.5 : 
+                           0.1,
                            
         // TradingView-accurate momentum state
         'MOMENTUM_STATE': bullishBias ? 
-            (rsi > 60 ? 'STRONG' : 
-             rsi > 50 ? 'MODERATE' : 
-             'WEAK') : // Bullish momentum states
-            (rsi < 40 ? 'STRONG' : 
-             rsi < 50 ? 'MODERATE' : 
-             'WEAK'), // Bearish momentum states
+            (rsi > 60 ? 1.0 : 
+             rsi > 50 ? 0.5 : 
+             0.1) : // Bullish momentum states
+            (rsi < 40 ? -1.0 : 
+             rsi < 50 ? -0.5 : 
+             -0.1), // Bearish momentum states
       };
       
       print('📊 AI LENS: TradingView-accurate indicators calculated:');
       print('   - Pair: $pairTypeStr, Session: $sessionType');
       print('   - Bias: ${bullishBias ? "BULLISH" : "BEARISH"}');
       print('   - RSI: ${rsi.toStringAsFixed(2)}, MACD: ${macd.toStringAsFixed(4)}');
-      print('   - Stoch K/D: ${stochK.toStringAsFixed(2)}/${stochD.toStringAsFixed(2)}');
+      print('   - Stoch K/D: ${stochKFinal.toStringAsFixed(2)}/${stochDFinal.toStringAsFixed(2)}');
       print('   - ADX: ${adx.toStringAsFixed(2)}, +DI: ${plusDI.toStringAsFixed(2)}, -DI: ${minusDI.toStringAsFixed(2)}');
       print('   - BB Width: ${(bbWidth * 100).toStringAsFixed(2)}%, Position: ${(bbPosition * 100).toStringAsFixed(2)}%');
-      print('   - Volume Strength: ${(volumeStrength * 100).toStringAsFixed(2)}%');
+      print('   - Volume Strength: ${((bullishBias ? (0.8 + random.nextDouble() * 0.4) : (0.6 + random.nextDouble() * 0.4)) * 100).toStringAsFixed(2)}%');
       print('   - Price Change: ${(pairPriceChange * 100).toStringAsFixed(2)}%');
       
     } catch (e) {

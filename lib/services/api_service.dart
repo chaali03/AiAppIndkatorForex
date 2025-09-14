@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+import '../utils/logger.dart';
 
 class ApiService {
   static final Dio _dio = Dio();
   static const String _alphaVantageApiKey = 'YOUR_ALPHA_VANTAGE_API_KEY';
   static const String _tradingViewApiUrl = 'https://scanner.tradingview.com/forex/scan';
-  
+
   // Alpha Vantage API for real-time forex data
   static Future<Map<String, dynamic>> getRealTimeForexData(String fromCurrency, String toCurrency) async {
     try {
@@ -19,7 +20,7 @@ class ApiService {
         return data['Realtime Currency Exchange Rate'] ?? {};
       }
     } catch (e) {
-      print('Error fetching real-time forex data: $e');
+      Logger.error('Error fetching real-time forex data: $e', 'API_SERVICE', e);
     }
     return {};
   }
@@ -35,7 +36,7 @@ class ApiService {
         return json.decode(response.body);
       }
     } catch (e) {
-      print('Error fetching technical indicators: $e');
+      Logger.error('Error fetching technical indicators: $e', 'API_SERVICE', e);
     }
     return {};
   }
@@ -73,7 +74,7 @@ class ApiService {
         return response.data;
       }
     } catch (e) {
-      print('Error fetching TradingView analysis: $e');
+      Logger.error('Error fetching TradingView analysis: $e', 'API_SERVICE', e);
     }
     return {};
   }
@@ -90,7 +91,7 @@ class ApiService {
         return List<Map<String, dynamic>>.from(data['events'] ?? []);
       }
     } catch (e) {
-      print('Error fetching economic calendar: $e');
+      Logger.error('Error fetching economic calendar: $e', 'API_SERVICE', e);
     }
     return [];
   }
@@ -107,7 +108,7 @@ class ApiService {
         return List<Map<String, dynamic>>.from(data['articles'] ?? []);
       }
     } catch (e) {
-      print('Error fetching forex news: $e');
+      Logger.error('Error fetching forex news: $e', 'API_SERVICE', e);
     }
     return [];
   }
@@ -136,13 +137,19 @@ class ApiService {
         final recommendMA = data['d'][2]; // Recommend.MA
         
         if (recommendAll != null) {
-          if (recommendAll > 0.5) bullishSignals++;
-          else if (recommendAll < -0.5) bearishSignals++;
+          if (recommendAll > 0.5) {
+            bullishSignals++;
+          } else if (recommendAll < -0.5) {
+            bearishSignals++;
+          }
         }
         
         if (recommendMA != null) {
-          if (recommendMA > 0.5) bullishSignals++;
-          else if (recommendMA < -0.5) bearishSignals++;
+          if (recommendMA > 0.5) {
+            bullishSignals++;
+          } else if (recommendMA < -0.5) {
+            bearishSignals++;
+          }
         }
       }
       
@@ -181,7 +188,7 @@ class ApiService {
       };
       
     } catch (e) {
-      print('Error analyzing market sentiment: $e');
+      Logger.error('Error analyzing market sentiment: $e', 'API_SERVICE', e);
       return {
         'sentiment_score': 0.0,
         'bullish_signals': 0,
@@ -217,7 +224,7 @@ class ApiService {
           results[timeframe] = response.data;
         }
       } catch (e) {
-        print('Error fetching $timeframe analysis: $e');
+        Logger.error('Error fetching $timeframe analysis: $e', 'API_SERVICE', e);
       }
     }
     

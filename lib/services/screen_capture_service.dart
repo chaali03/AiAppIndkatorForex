@@ -4,6 +4,7 @@ import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
 import '../ai/forex_analyzer.dart';
 import 'overlay_service.dart';
+import '../utils/logger.dart';
 
 class ScreenCaptureService {
   static bool _isCapturing = false;
@@ -23,12 +24,12 @@ class ScreenCaptureService {
     // Check permissions first
     final hasPermission = await requestPermissions();
     if (!hasPermission) {
-      print('❌ Screen capture permission denied');
+      Logger.error('Screen capture permission denied', 'SCREEN_CAPTURE');
       return;
     }
     
-    print('🎥 Starting REAL-TIME MetaTrader 5 screen capture...');
-    print('🧠 SUPER AI FOREX ANALYSIS - EVERY MOMENT');
+    Logger.info('Starting REAL-TIME MetaTrader 5 screen capture...', 'SCREEN_CAPTURE');
+    Logger.info('SUPER AI FOREX ANALYSIS - EVERY MOMENT', 'SCREEN_CAPTURE');
     
     // Start real-time screen capture via Android native
     // Analisa langsung di Android, overlay langsung muncul di atas MetaTrader
@@ -48,13 +49,13 @@ class ScreenCaptureService {
         // 4) Bookkeeping
         _frameCount++;
         if (_frameCount % 5 == 0) {
-          print('📊 Frames analyzed: $_frameCount | Signal: ${result.signalUpperCase} (${result.confidencePercent}%)');
+          Logger.debug('Frames analyzed: $_frameCount | Signal: ${result.signalUpperCase} (${result.confidencePercent}%)', 'SCREEN_CAPTURE');
         }
 
         // 5) Control loop speed (target ~10 FPS)
         await Future.delayed(const Duration(milliseconds: 100));
       } catch (e) {
-        print('❌ Error in screen capture: $e');
+        Logger.error('Error in screen capture: $e', 'SCREEN_CAPTURE', e);
         break;
       }
     }
@@ -62,7 +63,7 @@ class ScreenCaptureService {
 
   static void stopCapture() {
     _isCapturing = false;
-    print('⏹️ Screen capture stopped');
+    Logger.info('Screen capture stopped', 'SCREEN_CAPTURE');
   }
   
   // Capture real screen (akan diimplementasi via platform channel)
@@ -70,9 +71,8 @@ class ScreenCaptureService {
     // TODO: Implementasi real screen capture via platform channel
     // Untuk sekarang, gunakan simulasi yang lebih realistic
     
-    final random = Random();
-    final width = 400;
-    final height = 300;
+    const width = 400;
+    const height = 300;
     
     // Create MetaTrader-like chart
     final image = img.Image(width: width, height: height);
@@ -132,7 +132,6 @@ class ScreenCaptureService {
       final w = candleWidth * 0.8;
       
       // Calculate y positions
-      final priceRange = 0.005; // 50 pips range
       final minPrice = data.map((d) => d['low']!).reduce((a, b) => a < b ? a : b);
       final maxPrice = data.map((d) => d['high']!).reduce((a, b) => a > b ? a : b);
       
@@ -214,7 +213,7 @@ class ScreenCaptureService {
     for (int y = 0; y < height; y += 80) {
       final price = 1.2500 - (y / height * 0.005);
       // Draw price label (simplified)
-      img.drawString(image, '${price.toStringAsFixed(4)}', font: img.arial24, x: 5, y: y, color: labelColor);
+      img.drawString(image, price.toStringAsFixed(4), font: img.arial24, x: 5, y: y, color: labelColor);
     }
   }
   

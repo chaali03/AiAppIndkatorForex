@@ -5,7 +5,7 @@ class Logger {
   static const String _tag = 'AI_FOREX_MASTER';
   
   // Log levels
-  static const int verbose = 0;
+  static const int verboseLevel = 0;
   static const int debugLevel = 1;
   static const int infoLevel = 2;
   static const int warningLevel = 3;
@@ -19,7 +19,7 @@ class Logger {
   }
   
   static void verbose(String message, [String? tag]) {
-    _log(verbose, message, tag);
+    _log(verboseLevel, message, tag);
   }
   
   static void debug(String message, [String? tag]) {
@@ -75,7 +75,7 @@ class Logger {
   
   static String _getLevelName(int level) {
     switch (level) {
-      case verbose:
+      case verboseLevel:
         return 'VERBOSE';
       case debugLevel:
         return 'DEBUG';

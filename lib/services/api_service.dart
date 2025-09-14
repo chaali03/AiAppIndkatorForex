@@ -244,8 +244,11 @@ class ApiService {
       if (data['data'] != null && data['data'].isNotEmpty) {
         final recommendAll = data['data'][0]['d'][1];
         if (recommendAll != null) {
-          if (recommendAll > 0) totalBullish += recommendAll;
-          else totalBearish += recommendAll.abs();
+          if (recommendAll > 0) {
+            totalBullish += recommendAll;
+          } else {
+            totalBearish += recommendAll.abs();
+          }
           validTimeframes++;
         }
       }

@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.compile.JavaCompile
+
 allprojects {
     repositories {
         google()
@@ -14,6 +16,16 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+}
+
+// Ensure all Java compilation uses Java 17 to avoid obsolete source/target 8 warnings
+subprojects {
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
+        // Gradle 7+ supports setting release for consistent bytecode targeting
+        options.release.set(17)
+    }
 }
 
 tasks.register<Delete>("clean") {

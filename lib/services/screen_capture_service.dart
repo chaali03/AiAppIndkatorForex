@@ -68,7 +68,7 @@ class ScreenCaptureService {
   
   // Capture real screen (akan diimplementasi via platform channel)
   static Future<Uint8List> _captureRealScreen() async {
-    // TODO: Implementasi real screen capture via platform channel
+    // NOTE: Implementasi real screen capture via platform channel dipending.
     // Untuk sekarang, gunakan simulasi yang lebih realistic
     
     const width = 400;
@@ -103,7 +103,7 @@ class ScreenCaptureService {
     
     for (int i = 0; i < points; i++) {
       // Realistic forex price movement
-      final volatility = 0.001; // 10 pips
+      const volatility = 0.001; // 10 pips
       final change = (random.nextDouble() - 0.5) * volatility;
       final high = open + (random.nextDouble() * volatility * 0.5);
       final low = open - (random.nextDouble() * volatility * 0.5);

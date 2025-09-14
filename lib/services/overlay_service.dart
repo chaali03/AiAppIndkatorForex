@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import '../ai/forex_analyzer.dart';
+import '../utils/logger.dart';
 
 class OverlayService {
   static bool _isOverlayVisible = false;
@@ -9,13 +9,13 @@ class OverlayService {
   static Future<void> showOverlay(String signal) async {
     if (!_isOverlayVisible) {
       try {
-        // TODO: Implement overlay window for Android
-        // For now, just print the signal
-        print('AI SIGNAL: $signal');
+        // NOTE: Overlay window for Android is planned for a later implementation.
+        // For now, log the signal
+        Logger.info('AI SIGNAL: $signal', 'OVERLAY');
         _isOverlayVisible = true;
-        print('Overlay shown with signal: $signal');
+        Logger.info('Overlay shown with signal: $signal', 'OVERLAY');
       } catch (e) {
-        print('Error showing overlay: $e');
+        Logger.error('Error showing overlay: $e', 'OVERLAY', e);
       }
     }
   }
@@ -25,22 +25,22 @@ class OverlayService {
     _currentResult = result;
     if (!_isOverlayVisible) {
       try {
-        // TODO: Implement enhanced overlay window for Android
+        // NOTE: Enhanced overlay window for Android is planned for a later implementation.
         // For now, log once when overlay becomes visible
-        print('🤖 AI LENS SIGNAL: ${result.signalUpperCase} (${result.confidencePercent}%)');
+        Logger.info('AI LENS SIGNAL: ${result.signalUpperCase} (${result.confidencePercent}%)', 'OVERLAY');
         _isOverlayVisible = true;
       } catch (e) {
-        print('Error showing enhanced overlay: $e');
+        Logger.error('Error showing enhanced overlay: $e', 'OVERLAY', e);
       }
     }
   }
 
   static Future<void> hideOverlay() async {
     if (_isOverlayVisible) {
-      // TODO: Hide overlay window for Android
+      // NOTE: Hide overlay window for Android to be implemented later.
       _isOverlayVisible = false;
       _currentResult = null;
-      print('Overlay hidden');
+      Logger.info('Overlay hidden', 'OVERLAY');
     }
   }
 

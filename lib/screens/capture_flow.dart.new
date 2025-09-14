@@ -1,0 +1,41 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import '../services/screen_capture_service.dart';
+import '../services/overlay_service.dart';
+import '../ai/forex_analyzer.dart';
+
+class CaptureFlowScreen extends StatefulWidget {
+  const CaptureFlowScreen({super.key});
+
+  @override
+  State<CaptureFlowScreen> createState() => _CaptureFlowScreenState();
+}
+
+class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
+  bool _permissionGranted = false;
+  bool _isStarting = false;
+  Timer? _statusTimer;
+  int _frames = 0;
+  double _targetFps = 10; // informational only for now
+  AnalysisResult? _latestResult;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPermissions();
+    _statusTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      if (mounted) {
+        setState(() {
+          _frames = ScreenCaptureService.frameCount;
+          _latestResult = OverlayService.currentResult;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _statusTimer?.cancel();
+    super.dispose();
+  }

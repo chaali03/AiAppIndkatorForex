@@ -22,7 +22,6 @@ class ForexAIApp extends StatelessWidget {
           brightness: Brightness.dark,
           primary: const Color(0xFF2563EB),
           secondary: const Color(0xFF10B981),
-          background: const Color(0xFF111827),
           surface: const Color(0xFF1F2937),
           error: const Color(0xFFEF4444),
         ),
@@ -194,7 +193,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -219,7 +218,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
                 Text(
                   'Technical Chart Analysis',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -228,9 +227,9 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Theme.of(context).colorScheme.secondary.withOpacity(0.2)),
+              border: Border.all(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2)),
             ),
             child: Text(
               'ACTIVE',
@@ -259,7 +258,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -281,10 +280,10 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
             const SizedBox(height: 20),
             Card(
               elevation: 0,
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: Colors.white.withOpacity(0.05)),
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -357,14 +356,14 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
         Text(
           label,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
           ),
         ),
         isTag
             ? Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: valueColor.withOpacity(0.1),
+                  color: valueColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -404,7 +403,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -438,10 +437,10 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 0,
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.white.withOpacity(0.05)),
+        side: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -450,7 +449,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -476,7 +475,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
                   Text(
                     'Volume: ${data['volume']}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -485,7 +484,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: changeColor.withOpacity(0.1),
+                color: changeColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
@@ -496,8 +495,8 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -516,7 +515,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -525,24 +524,24 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
                     size: 20,
                   ),
                 ),
-              const SizedBox(width: 16),
-              Text(
-                'Market Analysis',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
+                const SizedBox(width: 16),
+                Text(
+                  'Market Analysis',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
               ),
             ),
             child: Column(
@@ -594,8 +593,10 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
           ),
         ],
       ),
-    );
+    ),
+  );
   }
+
 
   Widget _buildTradingViewIndicators() {
     return Card(
@@ -611,7 +612,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -675,10 +676,10 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
   Widget _buildIndicatorCard(String name, String value, String status, Color color) {
     return Card(
       elevation: 0,
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.white.withOpacity(0.05)),
+        side: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -688,7 +689,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
             Text(
               name,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -704,7 +705,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
@@ -740,7 +741,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
             Text(
               'Technical Analysis Platform',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 24),
@@ -766,7 +767,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -779,7 +780,7 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -791,10 +792,10 @@ class _ForexAIMainScreenState extends State<ForexAIMainScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

@@ -48,468 +48,125 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
   }
 
   Future<void> _requestPermissions() async {
-    final granted = await ScreenCaptureService.requestPermissions();
-    setState(() {
-      _permissionGranted = granted;
-    });
+    await Permission.systemAlertWindow.request();
+    await _checkPermissions();
   }
 
-  Future<void> _startCapture() async {
+  Future<void> _toggleCapture() async {
+    if (_isStarting) return;
+
     setState(() {
       _isStarting = true;
     });
-    await ScreenCaptureService.startCapture((_) {});
-    if (mounted) {
-      setState(() {
-        _isStarting = false;
-      });
-    }
-  }
 
-  void _stopCapture() {
-    ScreenCaptureService.stopCapture();
-    setState(() {});
+    if (!_permissionGranted) {
+      await _requestPermissions();
+    }
+
+    if (_permissionGranted) {
+      if (ScreenCaptureService.isCapturing) {
+        ScreenCaptureService.stopCapture();
+        OverlayService.hideOverlay();
+      } else {
+        ScreenCaptureService.startCapture((imageBytes) {
+          // Handle captured image
+        });
+        OverlayService.showOverlay('ANALYZING');
+      }
+    }
+
+    setState(() {
+      _isStarting = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isCapturing = ScreenCaptureService.isCapturing;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('AI Lens Capture', 
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.info_outline, 
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {
-              // Show info dialog
-            },
-          ),
-        ],
-      ),
+      backgroundColor: Colors.black,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-                _buildIntroCard(),
-                const SizedBox(height: 16),
-                _buildPermissionCard(),
-                const SizedBox(height: 16),
-                _buildSettingsCard(),
-                const SizedBox(height: 16),
-                _buildControlCard(isCapturing),
-                const SizedBox(height: 16),
-                _buildStatusCard(isCapturing),
-                const SizedBox(height: 16),
-                _buildSignalCard(),
-              ],
-            ),
+              _buildHeader(),
+              const SizedBox(height: 24),
+              _buildInfoCard(),
+              const SizedBox(height: 16),
+              _buildControlCard(),
+              const SizedBox(height: 16),
+              _buildStatusCard(),
+              const SizedBox(height: 16),
+              if (_latestResult != null) _buildSignalCard(_latestResult!),
+              const Spacer(),
+              _buildCaptureButton(),
+              const SizedBox(height: 16),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildIntroCard() {
-    return Card(
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                Icons.camera_alt_outlined, 
-                color: Theme.of(context).colorScheme.primary, 
-                size: 20
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Screen Capture',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontWeight: FontWeight.w600,
-                    ),
+            const BackButton(color: Colors.white),
+            const SizedBox(width: 8),
+            Text(
+              'Screen Capture Analysis',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Capture trading charts for AI analysis',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                    ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 8),
+        Text(
+          'Capture your trading screen to analyze patterns and signals in real-time',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white.withValues(alpha: 0.8),
+              ),
+        ),
+      ],
     );
   }
 
-  Widget _buildPermissionCard() {
+  Widget _buildInfoCard() {
     return Card(
-      margin: EdgeInsets.zero,
+      color: Colors.grey[900],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: (_permissionGranted 
-                      ? Theme.of(context).colorScheme.secondary 
-                      : Theme.of(context).colorScheme.error).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    _permissionGranted ? Icons.check_circle_outline : Icons.shield_outlined,
-                    color: _permissionGranted 
-                      ? Theme.of(context).colorScheme.secondary 
-                      : Theme.of(context).colorScheme.error,
-                    size: 18,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  _permissionGranted ? 'Permission Granted' : 'Permission Required',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
             Text(
-              _permissionGranted
-                  ? 'Screen overlay permission is active. You can now start capturing.'
-                  : 'This app needs permission to analyze your trading charts. Please grant overlay permission.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
-          ),
-          const SizedBox(height: 16),
-          if (!_permissionGranted)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _requestPermissions,
-                icon: const Icon(Icons.security, size: 18),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                label: const Text('Grant Permission', style: TextStyle(fontWeight: FontWeight.w500)),
-              ),
+              'How It Works',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSettingsCard() {
-    return Card(
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.settings_outlined,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 18,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Capture Settings',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Target FPS',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withOpacity(0.8),
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '${_targetFps.toInt()} FPS', 
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            const SizedBox(height: 12),
+            _buildInfoStep(1, 'Press Start Capture to begin screen analysis'),
             const SizedBox(height: 8),
-            SliderTheme(
-              data: SliderThemeData(
-                activeTrackColor: Theme.of(context).colorScheme.primary,
-                inactiveTrackColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                thumbColor: Theme.of(context).colorScheme.primary,
-                overlayColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              ),
-              child: Slider(
-                value: _targetFps,
-                min: 5,
-                max: 30,
-                divisions: 5,
-                label: '${_targetFps.toInt()} FPS',
-                onChanged: (v) => setState(() => _targetFps = v),
-              ),
-            ),
+            _buildInfoStep(2, 'Position the floating overlay on your trading chart'),
             const SizedBox(height: 8),
+            _buildInfoStep(3, 'AI will analyze patterns and provide signals'),
+            const SizedBox(height: 8),
+            _buildInfoStep(4, 'Press Stop Capture when finished'),
+            const SizedBox(height: 16),
             Text(
               'Higher FPS provides smoother analysis but uses more resources',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.white.withOpacity(0.6),
-              ),
-            )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildControlCard(bool isCapturing) {
-    return Card(
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: (isCapturing 
-                      ? Theme.of(context).colorScheme.error 
-                      : Theme.of(context).colorScheme.secondary).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    isCapturing ? Icons.stop_rounded : Icons.play_arrow_rounded,
-                    color: isCapturing 
-                      ? Theme.of(context).colorScheme.error 
-                      : Theme.of(context).colorScheme.secondary,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 16),
-              Text(
-                isCapturing ? 'Capture Running' : 'Ready to Start',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            isCapturing
-                ? 'Screen capture is active. AI analysis is running in real-time.'
-                : 'Start screen capture to begin AI analysis of your trading charts.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withOpacity(0.7),
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _isStarting || !_permissionGranted
-                  ? null
-                  : isCapturing
-                      ? _stopCapture
-                      : _startCapture,
-              icon: Icon(
-                isCapturing ? Icons.stop_rounded : Icons.play_arrow_rounded,
-                size: 20,
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isCapturing 
-                  ? Theme.of(context).colorScheme.error 
-                  : Theme.of(context).colorScheme.secondary,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: Colors.grey.withOpacity(0.3),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-              ),
-              label: _isStarting
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : Text(
-                      isCapturing ? 'Stop Capture' : 'Start Capture',
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatusCard(bool isCapturing) {
-    return Card(
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    Icons.analytics_outlined,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  'Capture Status',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white.withOpacity(0.05)),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Capture Status', 
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.8),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: (isCapturing 
-                            ? Theme.of(context).colorScheme.secondary 
-                            : Theme.of(context).colorScheme.error).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          isCapturing ? 'ACTIVE' : 'INACTIVE',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: isCapturing 
-                              ? Theme.of(context).colorScheme.secondary 
-                              : Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Frames Analyzed', 
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.8),
-                        ),
-                      ),
-                      Text(
-                        '$_frames', 
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.6),
+                fontSize: 12,
               ),
             ),
           ],
@@ -518,176 +175,296 @@ class _CaptureFlowScreenState extends State<CaptureFlowScreen> {
     );
   }
 
-  Widget _buildSignalCard() {
-    final result = _latestResult;
-    final hasResult = result != null;
-
-    final Color accent = hasResult ? result!.signalColor : const Color(0xFF8AB4FF);
-    final String title = hasResult ? 'AI Signal: ${result!.signalUpperCase}' : 'AI Signal';
-    final int confidence = hasResult ? result!.confidencePercent : 0;
-    final String pattern = hasResult ? result!.pattern : 'Waiting for analysis...';
-    final String reason = hasResult ? result!.reason : 'Start capture to receive live signals.';
-
-    return AnimatedOpacity(
-      duration: const Duration(milliseconds: 300),
-      opacity: hasResult ? 1 : 0.85,
-      child: Card(
-        margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      hasResult
-                          ? (result!.signal.toLowerCase().contains('buy')
-                              ? Icons.trending_up
-                              : result!.signal.toLowerCase().contains('sell')
-                                  ? Icons.trending_down
-                                  : Icons.pause_circle_filled)
-                          : Icons.auto_awesome,
-                      color: accent,
-                      size: 20,
-                    ),
+  Widget _buildControlCard() {
+    return Card(
+      color: Colors.grey[900],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Capture Settings',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(width: 16),
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Target FPS: ${_targetFps.toInt()}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+            ),
+            const SizedBox(height: 8),
+            Slider(
+              value: _targetFps,
+              min: 1,
+              max: 30,
+              divisions: 29,
+              activeColor: Theme.of(context).colorScheme.primary,
+              inactiveColor: Colors.grey[800],
+              onChanged: (value) {
+                setState(() {
+                  _targetFps = value;
+                });
+              },
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Low (1 FPS)',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.6),
+                      ),
                 ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Signal Direction', 
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withOpacity(0.8),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: accent.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            hasResult ? result!.signalUpperCase : 'WAITING',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: accent,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Confidence', 
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withOpacity(0.8),
-                          ),
-                        ),
-                        Text(
-                          '$confidence%', 
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Pattern', 
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withOpacity(0.8),
-                          ),
-                        ),
-                        Text(
-                          pattern, 
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                Text(
+                  'High (30 FPS)',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.6),
+                      ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Analysis Reason',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Colors.white.withOpacity(0.9),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                reason,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withOpacity(0.7),
-                ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _chip(String label, String value, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.5)),
+  Widget _buildStatusCard() {
+    final isCapturing = ScreenCaptureService.isCapturing;
+    return Card(
+      color: Colors.grey[900],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('$label: ', style: TextStyle(color: Colors.white.withOpacity(0.75), fontSize: 12)),
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Status',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            _buildStatusRow('Capture', isCapturing ? 'Active' : 'Inactive',
+                isCapturing ? Colors.green : Colors.red),
+            const SizedBox(height: 8),
+            _buildStatusRow('Frames Captured', '$_frames', Colors.blue),
+            const SizedBox(height: 8),
+            _buildStatusRow(
+                'Permissions',
+                _permissionGranted ? 'Granted' : 'Not Granted',
+                _permissionGranted ? Colors.green : Colors.orange),
+          ],
+        ),
       ),
     );
   }
 
+  Widget _buildSignalCard(AnalysisResult result) {
+    return Card(
+      color: Colors.grey[900],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Analysis Results',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            _buildResultRow('Signal', result.signal.toString(),
+                _getSignalColor(result.signal)),
+            const SizedBox(height: 8),
+            _buildResultRow('Confidence', '${(result.confidence * 100).toInt()}%',
+                _getConfidenceColor(result.confidence)),
+            const SizedBox(height: 8),
+            _buildResultRow(
+                'Pattern', result.pattern, Theme.of(context).colorScheme.primary),
+            const SizedBox(height: 8),
+            _buildResultRow('Time', _formatTime(result.timestamp), Colors.blue),
+            const SizedBox(height: 16),
+            Text(
+              'Detected Indicators',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: result.indicators.entries
+                  .map((entry) => _buildIndicatorChip(entry.key))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCaptureButton() {
+    final isCapturing = ScreenCaptureService.isCapturing;
+    return ElevatedButton(
+      onPressed: _isStarting ? null : _toggleCapture,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isCapturing ? Colors.red : Theme.of(context).colorScheme.primary,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: Text(
+        _isStarting
+            ? 'Processing...'
+            : isCapturing
+                ? 'Stop Capture'
+                : 'Start Capture',
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoStep(int number, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Text(
+              number.toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusRow(String label, String value, Color valueColor) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white.withValues(alpha: 0.7),
+              ),
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: valueColor,
+                fontWeight: FontWeight.w500,
+              ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultRow(String label, String value, Color valueColor) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white.withValues(alpha: 0.7),
+              ),
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: valueColor,
+                fontWeight: FontWeight.w500,
+              ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIndicatorChip(String indicator) {
+    return Chip(
+      backgroundColor: Colors.grey[800],
+      label: Text(
+        indicator,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+  }
+
+  Color _getSignalColor(String signal) {
+    switch (signal.toUpperCase()) {
+      case 'BUY':
+        return Colors.green;
+      case 'SELL':
+        return Colors.red;
+      case 'HOLD':
+        return Colors.amber;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Color _getConfidenceColor(double confidence) {
+    if (confidence > 0.7) return Colors.green;
+    if (confidence > 0.4) return Colors.amber;
+    return Colors.red;
+  }
+
+  // Removed unused _chip method
+
   String _formatTime(DateTime dt) {
-    final two = (int n) => n.toString().padLeft(2, '0');
+    String two(int n) {
+      return n.toString().padLeft(2, '0');
+    }
     return '${two(dt.hour)}:${two(dt.minute)}:${two(dt.second)}';
   }
 }

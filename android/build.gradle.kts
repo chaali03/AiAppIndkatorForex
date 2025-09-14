@@ -1,4 +1,7 @@
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.JavaVersion
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.LibraryExtension
 
 allprojects {
     repositories {
@@ -23,8 +26,26 @@ subprojects {
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = "17"
         targetCompatibility = "17"
-        // Gradle 7+ supports setting release for consistent bytecode targeting
-        options.release.set(17)
+    }
+}
+
+// Also configure Android Gradle Plugin compileOptions for both app and library modules
+subprojects {
+    plugins.withId("com.android.application") {
+        extensions.configure<AppExtension> {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
+    }
+    plugins.withId("com.android.library") {
+        extensions.configure<LibraryExtension> {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
     }
 }
 

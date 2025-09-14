@@ -2,6 +2,8 @@ import 'dart:typed_data';
 import 'dart:math';
 import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
+import '../ai/forex_analyzer.dart';
+import 'overlay_service.dart';
 
 class ScreenCaptureService {
   static bool _isCapturing = false;
@@ -33,14 +35,24 @@ class ScreenCaptureService {
     
     while (_isCapturing) {
       try {
-        // Real screen capture sudah dihandle di Android native
-        // Overlay signal langsung muncul di atas MetaTrader
+        // 1) Capture a frame (simulated for now)
+        final Uint8List frame = await _captureRealScreen();
+        onImage(frame);
+
+        // 2) Run AI analysis
+        final AnalysisResult result = await ForexAnalyzer.analyze(frame);
+
+        // 3) Update overlay/current result for UI consumption
+        await OverlayService.showEnhancedOverlay(result);
+
+        // 4) Bookkeeping
         _frameCount++;
-        print('📊 Frame $_frameCount - Real-time MetaTrader chart analyzed');
-        
-        // Analyze EVERY MOMENT for real-time trading (not every 2 seconds)
-        // This makes it truly real-time like professional trading systems
-        await Future.delayed(Duration(milliseconds: 100)); // 100ms = 10 FPS for real-time
+        if (_frameCount % 5 == 0) {
+          print('📊 Frames analyzed: $_frameCount | Signal: ${result.signalUpperCase} (${result.confidencePercent}%)');
+        }
+
+        // 5) Control loop speed (target ~10 FPS)
+        await Future.delayed(const Duration(milliseconds: 100));
       } catch (e) {
         print('❌ Error in screen capture: $e');
         break;

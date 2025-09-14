@@ -21,16 +21,14 @@ class OverlayService {
   }
 
   static Future<void> showEnhancedOverlay(AnalysisResult result) async {
+    // Always update the current result so UI can reflect the latest analysis
     _currentResult = result;
     if (!_isOverlayVisible) {
       try {
         // TODO: Implement enhanced overlay window for Android
-        // For now, just print the enhanced signal
+        // For now, log once when overlay becomes visible
         print('🤖 AI LENS SIGNAL: ${result.signalUpperCase} (${result.confidencePercent}%)');
-        print('📊 Pattern: ${result.pattern}');
-        print('🔍 Reason: ${result.reason}');
         _isOverlayVisible = true;
-        print('Enhanced overlay shown with signal: ${result.signalUpperCase}');
       } catch (e) {
         print('Error showing enhanced overlay: $e');
       }
